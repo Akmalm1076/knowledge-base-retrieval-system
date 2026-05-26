@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Environment variables
+.env
+.env.*
+
+# VS Code
+.vscode/
+
+# Database/cache
+*.db
+
+# Logs
+*.log
+
+# Pytest
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Build
+dist/
+build/
+
+# Uploads
+uploads/
+
+# Temp
+temp/
