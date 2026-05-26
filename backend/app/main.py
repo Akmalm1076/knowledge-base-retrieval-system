@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from app.rag_pipeline import search_similar_chunks
-from app.gemini_service import generate_response
+from app.services.retrieval_service import search_similar_chunks
+from app.services.gemini_service import generate_response
 from fastapi import UploadFile, File
 import os
-from app.ingest import ingest_document
-from app.database import cursor
+from app.services.ingestion_service import ingest_document
+from app.db.database import cursor
 # Entry point of the FastAPI backend application.
 # Starts the API server and defines routes/endpoints for interacting with the system.
 # This file will later connect frontend requests with the RAG pipeline and database operations.

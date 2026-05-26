@@ -1,7 +1,7 @@
 from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from app.embeddings import generate_embedding
-from app.database import cursor, connection
+from app.services.embedding_service import generate_embedding
+from app.db.database import cursor, connection
 # Handles the document ingestion pipeline for the knowledge base system.
 # Reads PDFs, splits them into smaller chunks, generates embeddings, and stores them in the database.
 # This file connects document processing with vector storage.

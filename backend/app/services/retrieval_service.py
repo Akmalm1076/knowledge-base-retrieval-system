@@ -1,5 +1,5 @@
-from app.database import cursor
-from app.embeddings import generate_embedding
+from app.db.database import cursor
+from app.services.embedding_service import generate_embedding
 # Retrieves the most semantically similar text chunks from PostgreSQL
 # Converts user query into an embedding vector and compares it against stored embeddings
 # Uses pgvector similarity search to return the closest matching chunks
