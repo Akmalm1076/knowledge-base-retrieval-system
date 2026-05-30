@@ -1,14 +1,12 @@
-import os
-from dotenv import load_dotenv
 import google.generativeai as genai
+
+from app.core.config import settings
 
 # Handles Gemini API configuration and response generation.
 # Loads API keys securely from environment variables and connects the RAG system with Gemini.
 # This module is responsible for generating final AI answers using retrieved document context.
 
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 model = genai.GenerativeModel("gemini-2.5-flash")
 

@@ -2,6 +2,7 @@ from pypdf import PdfReader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.services.embedding_service import generate_embedding
 from app.db.database import cursor, connection
+from app.core.config import settings
 # Handles the document ingestion pipeline for the knowledge base system.
 # Reads PDFs, splits them into smaller chunks, generates embeddings, and stores them in the database.
 # This file connects document processing with vector storage.
@@ -21,8 +22,8 @@ def load_pdf(file_path):
 def split_text(text):
 
     splitter = RecursiveCharacterTextSplitter(
-    chunk_size=500,
-    chunk_overlap=100,
+    chunk_size=settings.CHUNK_SIZE,
+    chunk_overlap=settings.CHUNK_OVERLAP,
     separators=["\n\n", "\n", ".", " "]
 )
     chunks = splitter.split_text(text)
