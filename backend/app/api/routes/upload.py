@@ -1,9 +1,10 @@
 from fastapi import APIRouter, UploadFile, File
 from app.services.ingestion_service import ingest_document
+from app.schemas.upload import UploadResponse
 
 router = APIRouter()
 
-@router.post("/upload")
+@router.post("/upload", response_model=UploadResponse)
 async def upload_file(file: UploadFile = File(...)):
 
     # Create file path
