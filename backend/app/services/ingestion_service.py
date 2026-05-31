@@ -3,20 +3,31 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from app.services.embedding_service import generate_embedding
 from app.db.database import cursor, connection
 from app.core.config import settings
+from app.exceptions import (
+    DocumentProcessingException,
+    DatabaseException
+)
 # Handles the document ingestion pipeline for the knowledge base system.
 # Reads PDFs, splits them into smaller chunks, generates embeddings, and stores them in the database.
 # This file connects document processing with vector storage.
 
 def load_pdf(file_path):
 
-    reader = PdfReader(file_path)
+    try:
 
-    text = ""
+        reader = PdfReader(file_path)
 
-    for page in reader.pages:
-        text += page.extract_text()
+        text = ""
 
-    return text
+        for page in reader.pages:
+            text += page.extract_text()
+
+        return text
+
+    except Exception as e:
+        raise DocumentProcessingException(
+            f"Failed to process PDF: {str(e)}"
+        )
 
 
 def split_text(text):
@@ -34,34 +45,41 @@ def split_text(text):
 # This function connects the text processing pipeline with the vector database storage system.
 def store_chunks(chunks, document_name):
 
-    # Delete old chunks for the same document
-    cursor.execute(
-    """
-    DELETE FROM document_chunks
-    WHERE document_name = %s
-    """,
-    (document_name,)
-    )
+    try:
 
-    for chunk in chunks:
-
-        # Generate embedding vector
-        embedding = generate_embedding(chunk)
-
-        # Insert into PostgreSQL
+        # Delete old chunks for the same document
         cursor.execute(
-            """
-            INSERT INTO document_chunks
-            (document_name, chunk_text, embedding)
-            VALUES (%s, %s, %s)
-            """,
-            (document_name, chunk, embedding)
+        """
+        DELETE FROM document_chunks
+        WHERE document_name = %s
+        """,
+        (document_name,)
         )
 
-    # Save all inserted rows
-    connection.commit()
+        for chunk in chunks:
 
-    print("Chunks stored successfully!")
+            # Generate embedding vector
+            embedding = generate_embedding(chunk)
+
+            # Insert into PostgreSQL
+            cursor.execute(
+                """
+                INSERT INTO document_chunks
+                (document_name, chunk_text, embedding)
+                VALUES (%s, %s, %s)
+                """,
+                (document_name, chunk, embedding)
+            )
+
+        # Save all inserted rows
+        connection.commit()
+
+        print("Chunks stored successfully!")
+
+    except Exception as e:
+        raise DatabaseException(
+            f"Failed to store document chunks: {str(e)}"
+        )
 
 # Complete ingestion workflow for a single document.
 # Loads PDF text, splits it into chunks, generates embeddings,

@@ -1,5 +1,5 @@
 import google.generativeai as genai
-
+from app.exceptions import GeminiException
 from app.core.config import settings
 
 # Handles Gemini API configuration and response generation.
@@ -29,6 +29,12 @@ def generate_response(query, context):
     Answer:
     """
 
-    response = model.generate_content(prompt)
+    try:
+        response = model.generate_content(prompt)
 
-    return response.text
+        return response.text
+    
+    except Exception as e:
+        raise GeminiException(
+            f"Failed to generate AI response: {str(e)}"
+        )
