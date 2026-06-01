@@ -7,6 +7,7 @@ from app.exceptions import (
     DocumentProcessingException,
     DatabaseException
 )
+from app.core.logging_config import logger
 # Handles the document ingestion pipeline for the knowledge base system.
 # Reads PDFs, splits them into smaller chunks, generates embeddings, and stores them in the database.
 # This file connects document processing with vector storage.
@@ -16,7 +17,7 @@ def load_pdf(file_path):
     try:
 
         reader = PdfReader(file_path)
-
+        logger.info(f"Successfully loaded PDF: {file_path}")
         text = ""
 
         for page in reader.pages:
@@ -38,7 +39,7 @@ def split_text(text):
     separators=["\n\n", "\n", ".", " "]
 )
     chunks = splitter.split_text(text)
-
+    logger.info(f"Generated {len(chunks)} chunks")
     return chunks
 # Stores text chunks and their corresponding embedding vectors into PostgreSQL.
 # Each chunk is converted into a semantic embedding before being inserted into the document_chunks table.
@@ -74,7 +75,9 @@ def store_chunks(chunks, document_name):
         # Save all inserted rows
         connection.commit()
 
-        print("Chunks stored successfully!")
+        logger.info(
+            f"Stored {len(chunks)} chunks for document: {document_name}"
+        )
 
     except Exception as e:
         raise DatabaseException(
@@ -86,6 +89,10 @@ def store_chunks(chunks, document_name):
 # and stores the processed chunks into PostgreSQL.
 def ingest_document(file_path, document_name):
 
+    logger.info(
+    f"Starting ingestion for document: {document_name}"
+    )
+
     # Load PDF text
     text = load_pdf(file_path)
 
@@ -94,6 +101,11 @@ def ingest_document(file_path, document_name):
 
     # Store chunks and embeddings
     store_chunks(chunks, document_name)
+
+    logger.info(
+        f"Completed ingestion for document: {document_name}"
+    )
+    
 #manual testing code for the entire ingestion pipeline
 if __name__ == "__main__":
 

@@ -10,16 +10,20 @@ from app.exceptions import (
     EmbeddingException,
     GeminiException
 )
+from app.core.logging_config import logger
 # Entry point of the FastAPI backend application.
 # Starts the API server and defines routes/endpoints for interacting with the system.
 # This file will later connect frontend requests with the RAG pipeline and database operations.
 app = FastAPI()
-
+logger.info("Application starting")
 @app.exception_handler(DatabaseException)
 async def database_exception_handler(
     request: Request,
     exc: DatabaseException
 ):
+    
+    logger.error(f"DatabaseException: {str(exc)}")
+
     return JSONResponse(
         status_code=500,
         content={
@@ -32,6 +36,9 @@ async def document_processing_exception_handler(
     request: Request,
     exc: DocumentProcessingException
 ):
+    
+    logger.error(f"DocumentProcessingException: {str(exc)}")
+
     return JSONResponse(
         status_code=400,
         content={
@@ -45,6 +52,9 @@ async def embedding_exception_handler(
     request: Request,
     exc: EmbeddingException
 ):
+    
+    logger.error(f"EmbeddingException: {str(exc)}")
+
     return JSONResponse(
         status_code=500,
         content={
@@ -58,6 +68,9 @@ async def gemini_exception_handler(
     request: Request,
     exc: GeminiException
 ):
+    
+    logger.error(f"GeminiException: {str(exc)}")
+
     return JSONResponse(
         status_code=500,
         content={

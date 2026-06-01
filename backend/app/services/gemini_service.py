@@ -1,7 +1,7 @@
 import google.generativeai as genai
 from app.exceptions import GeminiException
 from app.core.config import settings
-
+from app.core.logging_config import logger
 # Handles Gemini API configuration and response generation.
 # Loads API keys securely from environment variables and connects the RAG system with Gemini.
 # This module is responsible for generating final AI answers using retrieved document context.
@@ -30,8 +30,9 @@ def generate_response(query, context):
     """
 
     try:
+        logger.info("Generating response using Gemini")
         response = model.generate_content(prompt)
-
+        logger.info("Successfully generated Gemini response")
         return response.text
     
     except Exception as e:

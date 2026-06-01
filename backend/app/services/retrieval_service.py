@@ -1,10 +1,20 @@
 from app.db.database import cursor
 from app.services.embedding_service import generate_embedding
 from app.exceptions import DatabaseException
+from app.core.logging_config import logger
 # Retrieves the most semantically similar text chunks from PostgreSQL
 # Converts user query into an embedding vector and compares it against stored embeddings
 # Uses pgvector similarity search to return the closest matching chunks
 def search_similar_chunks(query, document_name=None):
+
+    if document_name:
+        logger.info(
+            f"Starting retrieval for query against document: {document_name}"
+    )
+    else:
+        logger.info(
+            "Starting retrieval across all documents"
+    )
 
     # Generate embedding for semantic search
     query_embedding = generate_embedding(query)
@@ -87,7 +97,9 @@ def search_similar_chunks(query, document_name=None):
             )
 
         results = cursor.fetchall()
-
+        logger.info(
+            f"Retrieved {len(results)} relevant chunks"
+        )
         return results
 
     except Exception as e:
