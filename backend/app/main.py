@@ -78,10 +78,25 @@ async def gemini_exception_handler(
         }
     )
 
-app.include_router(health_router) 
-app.include_router(search_router)
-app.include_router(upload_router)
-app.include_router(documents_router)
+app.include_router(
+    health_router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    search_router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    upload_router,
+    prefix="/api/v1"
+)
+
+app.include_router(
+    documents_router,
+    prefix="/api/v1"
+)
 @app.get("/")
 def root():
     return {"message": "Knowledge Base Retrieval System Running"}
