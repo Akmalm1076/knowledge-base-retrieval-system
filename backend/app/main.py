@@ -11,10 +11,21 @@ from app.exceptions import (
     GeminiException
 )
 from app.core.logging_config import logger
+from fastapi.middleware.cors import CORSMiddleware
 # Entry point of the FastAPI backend application.
 # Starts the API server and defines routes/endpoints for interacting with the system.
 # This file will later connect frontend requests with the RAG pipeline and database operations.
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logger.info("Application starting")
 @app.exception_handler(DatabaseException)
 async def database_exception_handler(
