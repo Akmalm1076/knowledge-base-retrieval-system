@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { uploadDocument } from "@/services/uploadService";
 
 export default function UploadForm() {
@@ -10,17 +10,30 @@ export default function UploadForm() {
   const [messageType, setMessageType] = useState<
     "success" | "error" | ""
   >("");
-  
-
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = event.target.files?.[0] || null;
 
-    setMessage("");
-    setMessageType("");
-  };
+  setMessage("");
+  setMessageType("");
+
+  if (!file) {
+    setSelectedFile(null);
+    return;
+  }
+
+  if (file.type !== "application/pdf") {
+    setSelectedFile(null);
+    setMessage("Only PDF files are allowed.");
+    setMessageType("error");
+    return;
+  }
+
+  setSelectedFile(file);
+};  
+
 
   const handleUpload = async () => {
     if (!selectedFile) {
@@ -37,6 +50,11 @@ export default function UploadForm() {
 
       setMessage(response.message);
       setMessageType("success");
+      setSelectedFile(null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       setMessage("Upload failed.");
       setMessageType("error");
@@ -50,14 +68,16 @@ export default function UploadForm() {
     <div className="rounded-lg border p-6 shadow-sm">
       <div className="space-y-4">
         <input
+          ref={fileInputRef}
           type="file"
           accept=".pdf"
           onChange={handleFileChange}
-          className="block w-full"
+          disabled={isUploading}
+          className="block w-full disabled:opacity-50"
         />
 
         {selectedFile && (
-          <p className="text-sm text-gray-600">
+          <p className="text-sm font-medium">
             Selected File: {selectedFile.name}
           </p>
         )}
