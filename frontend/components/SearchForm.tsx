@@ -8,8 +8,11 @@ export default function SearchForm() {
   const [documents, setDocuments] = useState<string[]>([]);
   const [query, setQuery] = useState("");
   const [selectedDocument, setSelectedDocument] = useState("");
+
   const [answer, setAnswer] = useState("");
+  const [error, setError] = useState("");
   const [validationError, setValidationError] = useState("");
+
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -35,8 +38,10 @@ export default function SearchForm() {
 
     try {
       setValidationError("");
-      setIsSearching(true);
+      setError("");
       setAnswer("");
+
+      setIsSearching(true);
 
       const response = await searchKnowledgeBase(
         query,
@@ -46,7 +51,12 @@ export default function SearchForm() {
       setAnswer(response.answer);
     } catch (error) {
       console.error(error);
-      setAnswer("Search failed.");
+
+      setAnswer("");
+
+      setError(
+        "Search failed. Please try again."
+      );
     } finally {
       setIsSearching(false);
     }
@@ -119,13 +129,23 @@ export default function SearchForm() {
         </button>
 
         {validationError && (
-          <div className="rounded border p-3">
+          <div className="rounded border border-yellow-300 bg-yellow-50 p-3">
             <p>{validationError}</p>
           </div>
         )}
 
+        {error && (
+          <div className="rounded border border-red-300 bg-red-50 p-4">
+            <h3 className="mb-2 font-semibold">
+              Error
+            </h3>
+
+            <p>{error}</p>
+          </div>
+        )}
+
         {answer && (
-          <div className="rounded border p-4">
+          <div className="rounded border border-green-300 bg-green-50 p-4">
             <h3 className="mb-2 font-semibold">
               Answer
             </h3>
