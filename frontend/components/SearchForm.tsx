@@ -69,8 +69,18 @@ export default function SearchForm() {
   };
 
   return (
-    <div className="rounded-lg border p-6 shadow-sm">
-      <div className="space-y-4">
+    <div className="rounded-xl border p-8 shadow-sm">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold">
+          🔍 Search Knowledge Base
+        </h2>
+
+        <p className="mt-2 text-sm opacity-70">
+          Ask questions about your uploaded documents and get AI-generated answers.
+        </p>
+      </div>
+
+      <div className="space-y-6">
         <div>
           <label
             htmlFor="query"
@@ -92,7 +102,7 @@ export default function SearchForm() {
               }
             }}
             placeholder="Ask a question about your documents..."
-            className="w-full rounded border p-2"
+            className="w-full rounded-lg border px-4 py-3"
           />
         </div>
 
@@ -109,41 +119,47 @@ export default function SearchForm() {
             disabled={isSearching}
             value={selectedDocument}
             onChange={(e) => setSelectedDocument(e.target.value)}
-            className="w-full rounded border p-2"
+            className="w-full rounded-lg border px-4 py-3"
           >
-            <option value="">
-              All Documents
-            </option>
 
-            {documents.map((document) => (
-              <option
-                key={document}
-                value={document}
+            <option
+                value=""
+                className="bg-black text-white"
               >
-                {document}
+                All Documents
               </option>
-            ))}
+
+              {documents.map((document) => (
+                <option
+                  key={document}
+                  value={document}
+                  className="bg-black text-white"
+                >
+                  {document}
+                </option>
+              ))}
+           
           </select>
         </div>
 
         <button
           onClick={handleSearch}
           disabled={isSearching}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
+          className="rounded-lg bg-black px-6 py-3 font-medium text-white transition-opacity disabled:opacity-50"
         >
           {isSearching ? "Searching..." : "Search"}
         </button>
 
         {validationError && (
-          <div className="rounded border border-yellow-300 bg-yellow-50 p-3">
+          <div className="rounded-lg border-l-4 border-yellow-500 p-4">
             <p>{validationError}</p>
           </div>
         )}
 
         {error && (
-          <div className="rounded border border-red-300 bg-red-50 p-4">
+          <div className="rounded-lg border-l-4 border-red-500 p-4">
             <h3 className="mb-2 font-semibold">
-              Error
+              ❌ Error
             </h3>
 
             <p>{error}</p>
@@ -151,31 +167,39 @@ export default function SearchForm() {
         )}
 
         {answer && (
-          <div className="rounded border border-green-300 bg-green-50 p-4">
-            <h3 className="mb-2 font-semibold">
-              Answer
+          <div className="rounded-xl border-l-4 border-green-500 p-5 shadow-sm">
+            <h3 className="mb-3 text-lg font-semibold">
+              📄 Answer
             </h3>
 
-            <p>{answer}</p>
+            <p className="leading-7">
+              {answer}
+            </p>
           </div>
         )}
 
         {contextChunks.length > 0 && (
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">
-              Retrieved Context
-            </h3>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-xl font-semibold">
+                📚 Retrieved Context
+              </h3>
+
+              <p className="mt-1 text-sm opacity-70">
+                {contextChunks.length} chunk(s) retrieved from the knowledge base
+              </p>
+            </div>
 
             {contextChunks.map((chunk, index) => (
               <div
                 key={index}
-                className="rounded border p-4"
+                className="rounded-xl border p-5 shadow-sm"
               >
-                <h4 className="mb-2 font-medium">
+                <h4 className="mb-3 font-semibold">
                   Chunk {index + 1}
                 </h4>
 
-                <p className="whitespace-pre-wrap text-sm">
+                <p className="whitespace-pre-wrap text-sm leading-6">
                   {chunk}
                 </p>
               </div>
