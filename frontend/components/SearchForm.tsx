@@ -9,6 +9,7 @@ export default function SearchForm() {
   const [query, setQuery] = useState("");
   const [selectedDocument, setSelectedDocument] = useState("");
   const [answer, setAnswer] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -26,10 +27,14 @@ export default function SearchForm() {
 
   const handleSearch = async () => {
     if (!query.trim()) {
+      setValidationError(
+        "Please enter a question before searching."
+      );
       return;
     }
 
     try {
+      setValidationError("");
       setIsSearching(true);
       setAnswer("");
 
@@ -61,8 +66,15 @@ export default function SearchForm() {
           <input
             id="query"
             type="text"
+            disabled={isSearching}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+
+              if (validationError) {
+                setValidationError("");
+              }
+            }}
             placeholder="Ask a question about your documents..."
             className="w-full rounded border p-2"
           />
@@ -78,6 +90,7 @@ export default function SearchForm() {
 
           <select
             id="document"
+            disabled={isSearching}
             value={selectedDocument}
             onChange={(e) => setSelectedDocument(e.target.value)}
             className="w-full rounded border p-2"
@@ -104,6 +117,12 @@ export default function SearchForm() {
         >
           {isSearching ? "Searching..." : "Search"}
         </button>
+
+        {validationError && (
+          <div className="rounded border p-3">
+            <p>{validationError}</p>
+          </div>
+        )}
 
         {answer && (
           <div className="rounded border p-4">
