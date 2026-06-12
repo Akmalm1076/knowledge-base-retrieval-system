@@ -10,6 +10,8 @@ export default function SearchForm() {
   const [selectedDocument, setSelectedDocument] = useState("");
 
   const [answer, setAnswer] = useState("");
+  const [contextChunks, setContextChunks] = useState<string[]>([]);
+
   const [error, setError] = useState("");
   const [validationError, setValidationError] = useState("");
 
@@ -39,7 +41,9 @@ export default function SearchForm() {
     try {
       setValidationError("");
       setError("");
+
       setAnswer("");
+      setContextChunks([]);
 
       setIsSearching(true);
 
@@ -49,10 +53,12 @@ export default function SearchForm() {
       );
 
       setAnswer(response.answer);
+      setContextChunks(response.context || []);
     } catch (error) {
       console.error(error);
 
       setAnswer("");
+      setContextChunks([]);
 
       setError(
         "Search failed. Please try again."
@@ -151,6 +157,29 @@ export default function SearchForm() {
             </h3>
 
             <p>{answer}</p>
+          </div>
+        )}
+
+        {contextChunks.length > 0 && (
+          <div className="space-y-3">
+            <h3 className="text-lg font-semibold">
+              Retrieved Context
+            </h3>
+
+            {contextChunks.map((chunk, index) => (
+              <div
+                key={index}
+                className="rounded border p-4"
+              >
+                <h4 className="mb-2 font-medium">
+                  Chunk {index + 1}
+                </h4>
+
+                <p className="whitespace-pre-wrap text-sm">
+                  {chunk}
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
