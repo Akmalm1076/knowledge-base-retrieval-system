@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends
 
 from app.dependencies.services import (
     get_retrieval_service,
-    get_gemini_service
+    get_gemini_service,
+    get_reranking_service
 )
 from app.schemas.search import SearchRequest, SearchResponse
 
@@ -17,6 +18,9 @@ def search(
     retrieval_service: Callable = Depends(
         get_retrieval_service
     ),
+    reranking_service: Callable = Depends(
+        get_reranking_service
+    ),
     gemini_service: Callable = Depends(
         get_gemini_service
     )
@@ -27,8 +31,13 @@ def search(
         request.document
     )
 
+    results = reranking_service(
+        request.query,
+        results
+    )
+
     context = "\n".join(
-        [result[0] for result in results]
+        [result["chunk_text"] for result in results]
     )
 
     answer = gemini_service(
@@ -40,5 +49,8 @@ def search(
         "query": request.query,
         "document": request.document,
         "answer": answer,
-        "context": [result[0] for result in results]
+        "context": [
+            result["chunk_text"]
+            for result in results
+        ]
     }

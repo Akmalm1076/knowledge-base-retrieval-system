@@ -1,0 +1,127 @@
+[33mcommit 8b411d872f553783d006eef8a641f0f94a334af9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sat Jun 13 01:17:36 2026 +0530
+
+    Polish search UI and improve dark mode support
+
+[33mcommit 8addf32deca896f7ceb31977589cb957a7e3c85f[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sat Jun 13 00:49:44 2026 +0530
+
+    Display retrieved context chunks in search results
+
+[33mcommit c1c85c8e2f93c13b96d31d71eff38bb41e356bad[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sat Jun 13 00:32:14 2026 +0530
+
+    Add search error handling and result styling
+
+[33mcommit a19e70aeaf433c3ea4ce16b7805e08c22f26acea[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Fri Jun 12 14:37:50 2026 +0530
+
+    improved search ux with validation controls
+
+[33mcommit 0142271ebab52e29e86d55826f9dcae84f8421da[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Thu Jun 11 23:10:59 2026 +0530
+
+    feat: implement end-to-end RAG search workflow
+
+[33mcommit 6cec2c397345276eb2c420fcfb0a2becc6377bbb[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Wed Jun 10 23:54:37 2026 +0530
+
+    feat: implement document listing page
+
+[33mcommit 9fffa408ba961ca53c654e27f2071000eb9529a0[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Wed Jun 10 23:44:05 2026 +0530
+
+    feat: complete upload page workflow
+
+[33mcommit 6263c923bca59a3ba92fef1d48beb70658b07492[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue Jun 9 23:44:03 2026 +0530
+
+    feat: improve upload page feedback and loading states
+
+[33mcommit a0cafccd521fcbcd8da05157d60bf0bfeb57dc85[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Mon Jun 8 00:09:51 2026 +0530
+
+    feat: implement document upload frontend integration
+
+[33mcommit 18fc125c7471a51bdf4f5aaa931ca836e9765a4e[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Fri Jun 5 00:14:29 2026 +0530
+
+    Add shared navbar and route navigation
+
+[33mcommit 0f685edcd2a7e61c1bc2a7270fdf808c5b5c0978[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Thu Jun 4 23:04:52 2026 +0530
+
+    Create frontend foundation and homepage
+
+[33mcommit c7659d9179f99522d1c14ee78104bae8eeec77eb[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue Jun 2 23:00:19 2026 +0530
+
+    Add Fast API dependency injection
+
+[33mcommit 4245ce2a80d4707f40d9ef7033c3f2943645549d[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue Jun 2 13:23:57 2026 +0530
+
+    Add API v1 versioning
+
+[33mcommit aa6ff407df62647ac1c43e75ecc5a2135c616624[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue Jun 2 00:52:13 2026 +0530
+
+    Add centralized application logging
+
+[33mcommit 77c6694b5a31a78c5d3e0e61ec160cd4261d714d[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sun May 31 22:46:50 2026 +0530
+
+    Add centralized exception handling
+
+[33mcommit 0071d026d5f5d9ef67a5f3ecde3a3435c83b5c16[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sat May 30 17:53:25 2026 +0530
+
+    Add Pydantic schemas for request and response validation
+
+[33mcommit bf4cceb01adc48be24b6b6fabe7e898ec5812933[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Sat May 30 15:00:18 2026 +0530
+
+    Add centralized environment configuration
+
+[33mcommit ea824031e3dd48a97437097cfe6fb9ca4f810b0c[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Fri May 29 14:24:26 2026 +0530
+
+    Refactor FastAPI routes using APIRouter modular architecture
+
+[33mcommit 5b28c2f184aeb33b43d19a0ddac17e087ac077ff[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Wed May 27 01:12:28 2026 +0530
+
+    Refactor backend into layered service architecture
+
+[33mcommit c28cdccad60e70fc73dc1d22f4824e4b68737c34[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue May 26 16:09:09 2026 +0530
+
+    Update README with project details and features
+    
+    Added project overview, features, tech stack, and status.
+
+[33mcommit 19b5b6515e121e7f49f2d123fd47d9dac26ab3cc[m
+Author: Akmalm1076 <akmalmansari1076@gmail.com>
+Date:   Tue May 26 15:44:46 2026 +0530
+
+    Initial backend RAG system setup

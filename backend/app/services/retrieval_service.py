@@ -2,59 +2,54 @@ from app.db.database import cursor
 from app.services.embedding_service import generate_embedding
 from app.exceptions import DatabaseException
 from app.core.logging_config import logger
+
+
 # Retrieves the most semantically similar text chunks from PostgreSQL
 # Converts user query into an embedding vector and compares it against stored embeddings
-# Uses pgvector similarity search to return the closest matching chunks
+# Uses hybrid retrieval (semantic + keyword) and returns structured retrieval objects
 def search_similar_chunks(query, document_name=None):
 
     if document_name:
         logger.info(
             f"Starting retrieval for query against document: {document_name}"
-    )
+        )
     else:
         logger.info(
             "Starting retrieval across all documents"
-    )
+        )
 
     # Generate embedding for semantic search
     query_embedding = generate_embedding(query)
 
     try:
 
-        # Hybrid retrieval:
-        # 1. Semantic vector similarity
-        # 2. Keyword text matching
-        document_filter = ""
-
         if document_name:
 
-            document_filter = "WHERE document_name = %s"
-
             cursor.execute(
-                f"""
-                SELECT DISTINCT chunk_text
+                """
+                SELECT DISTINCT chunk_text, document_name
                 FROM
                 (
                     (
-                        SELECT chunk_text
+                        SELECT chunk_text, document_name
                         FROM document_chunks
-                        {document_filter}
+                        WHERE document_name = %s
                         ORDER BY embedding <-> %s::vector
-                        LIMIT 3
+                        LIMIT 20
                     )
 
                     UNION
 
                     (
-                        SELECT chunk_text
+                        SELECT chunk_text, document_name
                         FROM document_chunks
                         WHERE to_tsvector('english', chunk_text)
-                        @@ plainto_tsquery('english', %s)
+                              @@ plainto_tsquery('english', %s)
                         AND document_name = %s
-                        LIMIT 3
+                        LIMIT 20
                     )
                 ) AS combined_results
-                LIMIT 3;
+                LIMIT 20;
                 """,
                 (
                     document_name,
@@ -68,27 +63,27 @@ def search_similar_chunks(query, document_name=None):
 
             cursor.execute(
                 """
-                SELECT DISTINCT chunk_text
+                SELECT DISTINCT chunk_text, document_name
                 FROM
                 (
                     (
-                        SELECT chunk_text
+                        SELECT chunk_text, document_name
                         FROM document_chunks
                         ORDER BY embedding <-> %s::vector
-                        LIMIT 3
+                        LIMIT 20
                     )
 
                     UNION
 
                     (
-                        SELECT chunk_text
+                        SELECT chunk_text, document_name
                         FROM document_chunks
                         WHERE to_tsvector('english', chunk_text)
-                        @@ plainto_tsquery('english', %s)
-                        LIMIT 3
+                              @@ plainto_tsquery('english', %s)
+                        LIMIT 20
                     )
                 ) AS combined_results
-                LIMIT 3;
+                LIMIT 20;
                 """,
                 (
                     query_embedding,
@@ -97,10 +92,20 @@ def search_similar_chunks(query, document_name=None):
             )
 
         results = cursor.fetchall()
+
+        retrieval_results = [
+            {
+                "chunk_text": row[0],
+                "document_name": row[1]
+            }
+            for row in results
+        ]
+
         logger.info(
-            f"Retrieved {len(results)} relevant chunks"
+            f"Retrieved {len(retrieval_results)} relevant chunks"
         )
-        return results
+
+        return retrieval_results
 
     except Exception as e:
         raise DatabaseException(
@@ -115,4 +120,4 @@ if __name__ == "__main__":
     results = search_similar_chunks(query)
 
     for result in results:
-        print(result[0])
+        print(result)
