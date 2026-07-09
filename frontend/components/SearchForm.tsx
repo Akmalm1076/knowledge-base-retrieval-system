@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { getDocuments } from "@/services/documentService";
-import { searchKnowledgeBase } from "@/services/searchService";
+import {
+  searchKnowledgeBase,
+  RetrievedContext,
+} from "@/services/searchService";
 
 export default function SearchForm() {
   const [documents, setDocuments] = useState<string[]>([]);
@@ -10,7 +13,7 @@ export default function SearchForm() {
   const [selectedDocument, setSelectedDocument] = useState("");
 
   const [answer, setAnswer] = useState("");
-  const [contextChunks, setContextChunks] = useState<string[]>([]);
+  const [contextChunks, setContextChunks] = useState<RetrievedContext[]>([]);
 
   const [error, setError] = useState("");
   const [validationError, setValidationError] = useState("");
@@ -121,24 +124,22 @@ export default function SearchForm() {
             onChange={(e) => setSelectedDocument(e.target.value)}
             className="w-full rounded-lg border px-4 py-3"
           >
-
             <option
-                value=""
+              value=""
+              className="bg-black text-white"
+            >
+              All Documents
+            </option>
+
+            {documents.map((document) => (
+              <option
+                key={document}
+                value={document}
                 className="bg-black text-white"
               >
-                All Documents
+                {document}
               </option>
-
-              {documents.map((document) => (
-                <option
-                  key={document}
-                  value={document}
-                  className="bg-black text-white"
-                >
-                  {document}
-                </option>
-              ))}
-           
+            ))}
           </select>
         </div>
 
@@ -193,14 +194,37 @@ export default function SearchForm() {
             {contextChunks.map((chunk, index) => (
               <div
                 key={index}
-                className="rounded-xl border p-5 shadow-sm"
+                className="rounded-xl border p-5 shadow-sm space-y-3"
               >
-                <h4 className="mb-3 font-semibold">
+                <h4 className="font-semibold">
                   Chunk {index + 1}
                 </h4>
 
+                <div className="text-sm space-y-1">
+                  <p>
+                    <strong>Document:</strong> {chunk.document_name}
+                  </p>
+
+                  <p>
+                    <strong>Found By:</strong>{" "}
+                    {[
+                      chunk.found_by.semantic && "Semantic",
+                      chunk.found_by.keyword && "Keyword",
+                    ]
+                      .filter(Boolean)
+                      .join(" + ")}
+                  </p>
+
+                  <p>
+                    <strong>Reranker Score:</strong>{" "}
+                    {chunk.reranker_score.toFixed(4)}
+                  </p>
+                </div>
+
+                <hr />
+
                 <p className="whitespace-pre-wrap text-sm leading-6">
-                  {chunk}
+                  {chunk.chunk_text}
                 </p>
               </div>
             ))}

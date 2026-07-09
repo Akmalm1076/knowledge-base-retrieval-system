@@ -5,8 +5,8 @@ from app.core.logging_config import logger
 
 
 # Retrieves the most semantically similar text chunks from PostgreSQL
-# Converts user query into an embedding vector and compares it against stored embeddings
-# Uses hybrid retrieval (semantic + keyword) and returns structured retrieval objects
+# Uses hybrid retrieval (semantic + keyword)
+# Returns structured retrieval objects with provenance information.
 def search_similar_chunks(query, document_name=None):
 
     if document_name:
@@ -18,7 +18,6 @@ def search_similar_chunks(query, document_name=None):
             "Starting retrieval across all documents"
         )
 
-    # Generate embedding for semantic search
     query_embedding = generate_embedding(query)
 
     try:
@@ -27,28 +26,44 @@ def search_similar_chunks(query, document_name=None):
 
             cursor.execute(
                 """
-                SELECT DISTINCT chunk_text, document_name
+                SELECT
+                    chunk_text,
+                    document_name,
+                    BOOL_OR(found_by_semantic) AS found_by_semantic,
+                    BOOL_OR(found_by_keyword) AS found_by_keyword
                 FROM
                 (
                     (
-                        SELECT chunk_text, document_name
+                        SELECT
+                            chunk_text,
+                            document_name,
+                            TRUE AS found_by_semantic,
+                            FALSE AS found_by_keyword
                         FROM document_chunks
                         WHERE document_name = %s
                         ORDER BY embedding <-> %s::vector
                         LIMIT 20
                     )
 
-                    UNION
+                    UNION ALL
 
                     (
-                        SELECT chunk_text, document_name
+                        SELECT
+                            chunk_text,
+                            document_name,
+                            FALSE AS found_by_semantic,
+                            TRUE AS found_by_keyword
                         FROM document_chunks
-                        WHERE to_tsvector('english', chunk_text)
-                              @@ plainto_tsquery('english', %s)
-                        AND document_name = %s
+                        WHERE
+                            to_tsvector('english', chunk_text)
+                            @@ plainto_tsquery('english', %s)
+                            AND document_name = %s
                         LIMIT 20
                     )
                 ) AS combined_results
+                GROUP BY
+                    chunk_text,
+                    document_name
                 LIMIT 20;
                 """,
                 (
@@ -63,26 +78,42 @@ def search_similar_chunks(query, document_name=None):
 
             cursor.execute(
                 """
-                SELECT DISTINCT chunk_text, document_name
+                SELECT
+                    chunk_text,
+                    document_name,
+                    BOOL_OR(found_by_semantic) AS found_by_semantic,
+                    BOOL_OR(found_by_keyword) AS found_by_keyword
                 FROM
                 (
                     (
-                        SELECT chunk_text, document_name
+                        SELECT
+                            chunk_text,
+                            document_name,
+                            TRUE AS found_by_semantic,
+                            FALSE AS found_by_keyword
                         FROM document_chunks
                         ORDER BY embedding <-> %s::vector
                         LIMIT 20
                     )
 
-                    UNION
+                    UNION ALL
 
                     (
-                        SELECT chunk_text, document_name
+                        SELECT
+                            chunk_text,
+                            document_name,
+                            FALSE AS found_by_semantic,
+                            TRUE AS found_by_keyword
                         FROM document_chunks
-                        WHERE to_tsvector('english', chunk_text)
-                              @@ plainto_tsquery('english', %s)
+                        WHERE
+                            to_tsvector('english', chunk_text)
+                            @@ plainto_tsquery('english', %s)
                         LIMIT 20
                     )
                 ) AS combined_results
+                GROUP BY
+                    chunk_text,
+                    document_name
                 LIMIT 20;
                 """,
                 (
@@ -91,14 +122,18 @@ def search_similar_chunks(query, document_name=None):
                 )
             )
 
-        results = cursor.fetchall()
+        rows = cursor.fetchall()
 
         retrieval_results = [
             {
                 "chunk_text": row[0],
-                "document_name": row[1]
+                "document_name": row[1],
+                "found_by": {
+                    "semantic": row[2],
+                    "keyword": row[3]
+                }
             }
-            for row in results
+            for row in rows
         ]
 
         logger.info(

@@ -20,7 +20,12 @@ def rerank_chunks(query, results):
         reverse=True
     )
 
-    return [
-        result
-        for result, score in ranked_results[:3]
-    ]
+    reranked_results = []
+
+    for result, score in ranked_results[:3]:
+
+        result["reranker_score"] = float(score)
+
+        reranked_results.append(result)
+
+    return reranked_results
